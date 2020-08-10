@@ -1,5 +1,5 @@
 # GraphSage_Cross_Modal_GCN
-Adaptive Semi-supervised Graph Convolutional Hashing Network For Large-Scale Cross-Modal Hashing.
+Adaptive Semi-supervised Graph Convolutional Hashing Network For Large-Scale Cross-Modal Retrieval.
 
 ### Overview
 Here we provide the implementation of our model in TensorFlow, along with all experimental datasets. The repository is organised as follows:
