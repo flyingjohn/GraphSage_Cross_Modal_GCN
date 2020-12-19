@@ -21,10 +21,10 @@ import numpy as np
 seed = 1
 np.random.seed(seed)
 tf.set_random_seed(seed)
-# random.seed(seed)
+random.seed(seed)
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ['CUDA_VISIBLE_DEVICES'] = '1,7'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 # Settings
 flags = tf.app.flags
@@ -44,7 +44,7 @@ flags.DEFINE_integer('img_gc1', 500, 'Initial learning rate.')
 #txt-model setting
 flags.DEFINE_integer('txt_gc1', 500, 'Initial learning rate.')
 #out-put dim
-flags.DEFINE_integer('hash_bit', 32, 'Initial learning rate.')
+flags.DEFINE_integer('hash_bit', 64, 'Initial learning rate.')
 flags.DEFINE_integer('siamese_bit', 128, 'Initial learning rate.')
 flags.DEFINE_integer('siamese_bit_1', 64, 'Initial learning rate.')
 #learning rate
@@ -333,6 +333,7 @@ if FLAGS.train:
             '''
                 combine optimization without domain classifier, but with a label classifier
             '''
+            # domain_op_ = sess.run(dc_op, feed_dict=feed_dict)
             op_, lc_ = sess.run([total_op, lc_op], feed_dict=feed_dict)
             likely_loss_v, hash_likely_loss_v, q_img, temp_emb_v, temp_balance_img = sess.run([neg_likely_v, hash_neg_likely_v, quantization_img, emb_v, img_balance], feed_dict=feed_dict)
             likely_loss_w, hash_likely_loss_w, q_txt, temp_emb_w, temp_balance_txt = sess.run([neg_likely_w, hash_neg_likely_w, quantization_txt, emb_w, txt_balance], feed_dict=feed_dict)

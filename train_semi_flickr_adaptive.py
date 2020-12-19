@@ -21,10 +21,10 @@ import numpy as np
 seed = 1
 np.random.seed(seed)
 tf.set_random_seed(seed)
-# random.seed(seed)
+random.seed(seed)
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ['CUDA_VISIBLE_DEVICES'] = '0,6'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 # Settings
 flags = tf.app.flags
@@ -34,7 +34,7 @@ flags.DEFINE_float('threshold', 0.65, 'density for construct graph')
 flags.DEFINE_integer('kNum', 20, 'density for construct graph')
 flags.DEFINE_integer('semi_kNum', 20, 'density for construct graph')
 flags.DEFINE_float('percentage', 1.0, 'density for construct graph')
-flags.DEFINE_string('dataset', 'Flickr-25k-relu', 'Dataset string.')  # 'cora', 'citeseer', 'pubmed'
+flags.DEFINE_string('dataset', 'Flickr-25k-relu', 'Dataset string.') # 'cora', 'citeseer', 'pubmed'
 flags.DEFINE_string('model', 'gcn', 'Model string.')  # 'gcn', 'gcn_cheby', 'dense'
 flags.DEFINE_integer('max_degree', 128, 'maximum node degree.')
 flags.DEFINE_integer('samples_1', 25, 'number of samples in layer 1')
@@ -44,7 +44,7 @@ flags.DEFINE_integer('img_gc1', 1000, 'Initial learning rate.')
 #txt-model setting
 flags.DEFINE_integer('txt_gc1', 300, 'Initial learning rate.')
 #out-put dim
-flags.DEFINE_integer('hash_bit', 24, 'Initial learning rate.')
+flags.DEFINE_integer('hash_bit', 64, 'Initial learning rate.')
 flags.DEFINE_integer('siamese_bit', 128, 'Initial learning rate.')
 flags.DEFINE_integer('siamese_bit_1', 64, 'Initial learning rate.')
 #learning rate
@@ -54,7 +54,7 @@ flags.DEFINE_float('lr_domain', 0.0001, 'Initial learning rate.')
 flags.DEFINE_float('lr_label', 0.00005, 'Initial learning rate.')
 flags.DEFINE_integer('batch_size', 256, 'batch size.')
 #other setting
-flags.DEFINE_integer('epochs', 200, 'Number of epochs to train.')
+flags.DEFINE_integer('epochs', 500, 'Number of epochs to train.')
 flags.DEFINE_float('dropout', 0.5, 'Dropout rate (1 - keep probability).')
 flags.DEFINE_float('weight_decay', 5e-4, 'Weight for L2 loss on embedding matrix.')
 flags.DEFINE_integer('early_stopping', 10, 'Tolerance for early stopping (# of epochs).')
@@ -241,10 +241,6 @@ total_loss = img_loss + txt_loss + equality_loss + balance_loss + label_loss
 '''
     optimizer
 '''
-# label classifier optimizer
-# lc_variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope="label_classifier")
-# classifier_vars = [var for var in lc_variables]
-
 t_vars = tf.trainable_variables()
 dc_vars = [v for v in t_vars if 'dc_' in v.name]
 siamese_vars = [v for v in t_vars if 'siamese_fc_' in v.name]
@@ -332,6 +328,7 @@ if FLAGS.train:
             '''
                 combine optimization without domain classifier, but with a label classifier
             '''
+            # domain_op_ = sess.run(dc_op, feed_dict=feed_dict)
             op_, lc_ = sess.run([total_op, lc_op], feed_dict=feed_dict)
             likely_loss_v, hash_likely_loss_v, q_img, temp_emb_v, temp_balance_img = sess.run([neg_likely_v, hash_neg_likely_v, quantization_img, emb_v, img_balance], feed_dict=feed_dict)
             likely_loss_w, hash_likely_loss_w, q_txt, temp_emb_w, temp_balance_txt = sess.run([neg_likely_w, hash_neg_likely_w, quantization_txt, emb_w, txt_balance], feed_dict=feed_dict)

@@ -21,10 +21,10 @@ import numpy as np
 seed = 1
 np.random.seed(seed)
 tf.set_random_seed(seed)
-# random.seed(seed)
+random.seed(seed)
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ['CUDA_VISIBLE_DEVICES'] = '1,7'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 # Settings
 flags = tf.app.flags
@@ -33,7 +33,7 @@ flags.DEFINE_boolean('train', True, 'is training or test')
 flags.DEFINE_float('threshold', 0.65, 'density for construct graph')
 flags.DEFINE_integer('kNum', 20, 'density for construct graph')
 flags.DEFINE_integer('semi_kNum', 20, 'density for construct graph')
-flags.DEFINE_float('percentage', 0.7, 'density for construct graph')
+flags.DEFINE_float('percentage', 1.0, 'density for construct graph')
 flags.DEFINE_string('dataset', 'nuswide', 'Dataset string.')  # 'cora', 'citeseer', 'pubmed'
 flags.DEFINE_string('model', 'gcn', 'Model string.')  # 'gcn', 'gcn_cheby', 'dense'
 flags.DEFINE_integer('max_degree', 128, 'maximum node degree.')
@@ -44,7 +44,7 @@ flags.DEFINE_integer('img_gc1', 1000, 'Initial learning rate.')
 #txt-model setting
 flags.DEFINE_integer('txt_gc1', 300, 'Initial learning rate.')
 #out-put dim
-flags.DEFINE_integer('hash_bit', 32, 'Initial learning rate.')
+flags.DEFINE_integer('hash_bit', 64, 'Initial learning rate.')
 flags.DEFINE_integer('siamese_bit', 128, 'Initial learning rate.')
 flags.DEFINE_integer('siamese_bit_1', 64, 'Initial learning rate.')
 #learning rate
@@ -345,6 +345,7 @@ if FLAGS.train:
             '''
                 combine optimization without domain classifier, but with a label classifier
             '''
+            # domain_op_ = sess.run(dc_op, feed_dict=feed_dict)
             op_, lc_ = sess.run([total_op, lc_op], feed_dict=feed_dict)
             # op_ = sess.run(total_op, feed_dict=feed_dict)
             likely_loss_v, hash_likely_loss_v, q_img, temp_emb_v, temp_balance_img = sess.run([neg_likely_v, hash_neg_likely_v, quantization_img, emb_v, img_balance], feed_dict=feed_dict)
